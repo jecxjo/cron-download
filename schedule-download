@@ -1,0 +1,53 @@
+#!/usr/bin/bash
+# Cron Download Shell Script
+# Copyright (C) 2015 Jeff Parent
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+if [ -e $HOME/.cron-download.conf ]; then
+  source $HOME/.cron-download.conf
+elif [ -e /etc/cron-download.conf ]; then
+  source /etc/cron-download.conf
+fi
+
+[[ ! -z ${BASE_DIR} ]] || BASE_DIR=/var/cache/cron-download
+[[ ! -z ${FILES_DIR} ]] || FILES_DIR=$BASE_DIR/files
+[[ ! -z ${WATCH_DIR} ]] || WATCH_DIR=$BASE_DIR/watch
+[[ ! -z ${COMPLETE_DIR} ]] || COMPLETE_DIR=$BASE_DIR/complete
+
+if [ $# -ne 2 ]; then
+cat <<EOF
+Usage: schedule-download <URL> <Filename>
+
+Cron Download Shell Script
+(c) Jeff Parent <jecxjo@sdf.lonestar.org> 2015
+http://github.com/jecxjo/cron-download
+
+Cron Download Shell Script version 1, Copyright (C) 2015 Jeff Parent
+Cron Download comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under
+certain conditions.
+EOF
+  exit 1
+else
+  URL=$1
+  FILE=$2
+
+  DATE=$(date +%Y%m%d%H%M%S)
+  OUTPUT="$WATCH_DIR/$FILE.$DATE"
+  echo "Scheduled URL[$URL] FILE[$FILE]"
+  echo -e "URL=\"$URL\"\nFILE=\"$FILE\"" > "$OUTPUT"
+fi
+exit 0
